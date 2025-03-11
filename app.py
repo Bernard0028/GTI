@@ -6,14 +6,6 @@ import plotly.express as px
 from PIL import Image
 import base64
 import streamlit as st
-from statsmodels.tsa.holtwinters import Holt
-import numpy as np
-    
-
-
-
-
-
 
 # Encode the image as base64
 def get_base64_image(image_path):
@@ -44,7 +36,7 @@ st.markdown("""
 
 # Sidebar Navigation
 st.sidebar.title("📍 Navigation")
-page = st.sidebar.radio("Go to", ["About Us", "Introduction", "Overview", "EDA", "Prediction"])
+page = st.sidebar.radio("Go to", ["About Us", "Introduction", "Overview", "Top 10 Countries", "Data Exploration", "Visualization"])
 
 
 if page == "About Us":
@@ -273,155 +265,82 @@ if page == "Overview":
     st.markdown("---")  # Divider
 
 
-elif page == "EDA":
-    # Apply Seaborn theme for better aesthetics
-    sns.set_style("whitegrid")
-    sns.set_palette("Set2")
-
-    st.markdown("<p class='title'>🔍 Exploratory Data Analysis (EDA)</p>", unsafe_allow_html=True)
-    
-    # Create tabs for different EDA sections
-    tab1, tab2, tab3 = st.tabs(["📌 Top 10 Countries", "📊 Data Exploration", "📈 Visualization"])
-
-    # 📌 Top 10 Most Affected Countries
-    with tab1:
-        st.markdown("## 📌 Top 10 Most Affected Countries")
-        
-        # Aggregating data to find top affected countries
-        country_counts = data.groupby("Country")["Incidents"].sum().reset_index()
-        top_countries = country_counts.sort_values(by="Incidents", ascending=False).head(10)
-
-        # Display bar chart
-        st.bar_chart(top_countries.set_index("Country"))
-
-        # Data Table
-        st.subheader("Top 10 Countries Data")
-        st.write(top_countries)
-
-        # Alternative visualization with Seaborn
-        fig, ax = plt.subplots(figsize=(12, 6))
-        sns.barplot(x="Incidents", y="Country", data=top_countries, palette="Reds_r", ax=ax)
-        ax.set_xlabel("Number of Incidents")
-        ax.set_ylabel("Country")
-        ax.set_title("Top 10 Countries with Highest Terrorism Incidents")
-        st.pyplot(fig)
-
-    # 📊 General Data Exploration
-    with tab2:
-        st.markdown("## 🔍 Explore the Data")
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.subheader("📍 Incidents by Country")
-            st.write(data["Country"].value_counts())
-
-        with col2:
-            st.subheader("📆 Incidents by Year")
-            st.write(data["Year"].value_counts())
-
-    # 📈 Visualization of Terrorism Trends
-    with tab3:
-        st.markdown("## 📈 Visualizing Terrorism Trends")
-
-        # Group by Year and Sum Incidents
-        incidents_by_year = data.groupby("Year")["Incidents"].sum().reset_index()
-
-        # Line Chart
-        fig, ax = plt.subplots(figsize=(10, 5))
-        sns.lineplot(x="Year", y="Incidents", data=incidents_by_year, marker="o", color="red", ax=ax)
-        ax.set_xlabel("Year")
-        ax.set_ylabel("Total Incidents")
-        ax.set_title("Trend of Terrorism Incidents Over Time")
-        ax.grid(True)
-        st.pyplot(fig)
-
-        # 🌍 World Heatmap (Choropleth)
-        fig = px.choropleth(
-            data, 
-            locations="iso3c", 
-            color="Incidents",
-            hover_name="Country",
-            title="Global Terrorism Intensity",
-            color_continuous_scale="Reds",
-            projection="natural earth"
-        )
-        st.plotly_chart(fig)
-
-
-
 
 
 
   
 
 
+# 📌 Top 10 Countries Page
+elif page == "Top 10 Countries":
+    st.markdown("<p class='title'>📌 Top 10 Countries Affected</p>", unsafe_allow_html=True)
+
+    # Aggregating data to find top affected countries
+    country_counts = data.groupby("Country")["Incidents"].sum().reset_index()
+    top_countries = country_counts.sort_values(by="Incidents", ascending=False).head(10)
+
+    st.bar_chart(top_countries.set_index("Country"))  # Visualizing the top 10 countries
+
+    st.subheader("Top 10 Countries Data")
+    st.write(top_countries)
 
 
-elif page == "Prediction":
-    # Apply Seaborn theme for better aesthetics
-    sns.set_style("whitegrid")
-    sns.set_palette("Set2")
 
-    st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
-    st.write("This application predicts future terrorism incidents based on historical data using Holt's Exponential Smoothing.")
+# 🔥 Top 10 Countries Page
+elif page == "Top 10 Countries":
+    st.markdown("<p class='title'>🔥 Top 10 Most Affected Countries</p>", unsafe_allow_html=True)
+    
+    # Group by Country and Sum Incidents
+    incidents_by_country = data.groupby("Country")["Incidents"].sum().reset_index()
+    incidents_by_country = incidents_by_country.sort_values(by="Incidents", ascending=False).head(10)
+    
+    # Display Data
+    st.dataframe(incidents_by_country, height=300)
 
-    # Country selection
-    selected_country = st.selectbox("Select a country:", sorted(data["Country"].unique()))
+    # Bar Chart
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.barplot(x="Incidents", y="Country", data=incidents_by_country, palette="Reds_r", ax=ax)
+    ax.set_xlabel("Number of Incidents")
+    ax.set_ylabel("Country")
+    ax.set_title("Top 10 Countries with Highest Terrorism Incidents")
+    st.pyplot(fig)
 
-    # Filter data by the selected country
-    country_data = data[data["Country"] == selected_country]
+# 🔍 Data Exploration Page
+elif page == "Data Exploration":
+    st.markdown("<p class='title'>🔍 Explore the Data</p>", unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("📍 Incidents by Country")
+        st.write(data["Country"].value_counts())
 
-    if country_data.empty:
-        st.warning("No data available for the selected country.")
-    else:
-        # Group by Year and sum incidents
-        incidents_by_year = country_data.groupby("Year")["Incidents"].sum().reset_index()
+    with col2:
+        st.subheader("📆 Incidents by Year")
+        st.write(data["Year"].value_counts())
 
-        if incidents_by_year.empty:
-            st.warning("No incident data available for the selected country.")
-        else:
-            # Fit the Holt model
-            model = Holt(incidents_by_year["Incidents"])
-            fit = model.fit(smoothing_level=0.2, smoothing_trend=0.1, optimized=True)
-
-            # Ensure non-negative fitted values
-            fitted_values = np.maximum(fit.fittedvalues, 0)
-
-            # User input for number of years to predict
-            num_years_to_predict = st.slider("Select number of years to predict:", 1, 10, 5)
-            last_year = incidents_by_year["Year"].max()
-            forecast_years = list(range(last_year + 1, last_year + num_years_to_predict + 1))
-
-            # Ensure non-negative forecast values
-            forecast_values = np.maximum(fit.forecast(len(forecast_years)), 0)
-
-            # Plot results
-            fig, ax = plt.subplots(figsize=(12, 6))
-
-            # Actual Data
-            ax.plot(incidents_by_year["Year"], incidents_by_year["Incidents"], 
-                    marker="o", markersize=7, linewidth=2, label="Actual Data", color="#4C72B0")
-
-            # Fitted Trend
-            ax.plot(incidents_by_year["Year"], fitted_values, linestyle="dashed", linewidth=2, 
-                    color="red", label="Fitted Trend")
-
-            # Forecast
-            ax.plot(forecast_years, forecast_values, linestyle="dashed", marker="o", markersize=7, 
-                    linewidth=2, color="green", label="Forecast")
-
-            # Labels and Styling
-            ax.set_xlabel("Year", fontsize=14, fontweight="bold")
-            ax.set_ylabel("Total Incidents", fontsize=14, fontweight="bold")
-            ax.set_title(f"Incident Prediction for {selected_country}", fontsize=16, fontweight="bold")
-            ax.legend(fontsize=12)
-            ax.grid(alpha=0.3)
-
-            # Show plot in Streamlit
-            st.pyplot(fig)
-
-            # Display forecast values
-            st.subheader(f"Predicted Incidents for {selected_country}:")
-            predictions = pd.DataFrame({"Year": forecast_years, "Predicted Incidents": forecast_values})
-            st.dataframe(predictions)
+# 📈 Visualization Page
+elif page == "Visualization":
+    st.markdown("<p class='title'>📈 Visualizing Terrorism Trends</p>", unsafe_allow_html=True)
+    
+    # Group by Year and Sum Incidents
+    incidents_by_year = data.groupby("Year")["Incidents"].sum().reset_index()
+    
+    # Line Chart
+    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.lineplot(x="Year", y="Incidents", data=incidents_by_year, marker="o", color="red", ax=ax)
+    ax.set_xlabel("Year")
+    ax.set_ylabel("Total Incidents")
+    ax.set_title("Trend of Terrorism Incidents Over Time")
+    ax.grid(True)
+    st.pyplot(fig)
+    
+    # 🌍 World Heatmap (Choropleth)
+    fig = px.choropleth(data, 
+                        locations="iso3c", 
+                        color="Incidents",
+                        hover_name="Country",
+                        title="Global Terrorism Intensity",
+                        color_continuous_scale="Reds",
+                        projection="natural earth")
+    st.plotly_chart(fig)
