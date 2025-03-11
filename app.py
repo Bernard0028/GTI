@@ -17,7 +17,7 @@ image_base64 = get_base64_image("istockphoto-106492379-612x612.jpg")
 
 
 # Load Data
-data = pd.read_csv("Global Terrorism Index 2023.csv")
+data = pd.read_csv("Global Terrorism Index 2023_with_regions.csv")
 
 # Load Image for Introduction Page
 image = Image.open("istockphoto-106492379-612x612.jpg")
