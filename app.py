@@ -210,6 +210,7 @@ if 'page' in locals() and page == "Overview":
     st.markdown("""
         <h1 class='title'>🌍 Global Terrorism Overview</h1>
     """, unsafe_allow_html=True)
+    #Image gif
     st.image("https://tenor.com/view/terrorist-dance-gif-19468443", caption="Global Security and Terrorism")
     # Overview Content
     st.write("""
