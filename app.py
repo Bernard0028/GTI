@@ -211,7 +211,7 @@ if 'page' in locals() and page == "Overview":
         <h1 class='title'>🌍 Global Terrorism Overview</h1>
     """, unsafe_allow_html=True)
    gif_url = "https://tenor.com/view/terrorist-dance-gif-19468443"
-    st.markdown(f"<img src='{gif_url}' width='700' style='display: block; margin: auto;'>", unsafe_allow_html=True
+    st.markdown(f"<img src='{gif_url}' width='700' style='display: block; margin: auto;'>", unsafe_allow_html=True)
     # Overview Content
     st.write("""
     Terrorism is a global threat that evolves with political conflicts, economic disparities, and technological advancements. Regions like the Middle East, Africa, and South Asia remain major hotspots, while cyber and lone-wolf attacks are on the rise. Terrorist groups leverage social media, encrypted communication, and drones, increasing their reach and impact. 
