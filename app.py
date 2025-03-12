@@ -205,9 +205,35 @@ if page == "Introduction":
 
 
 # 📊 Overview Page
-if page == "Overview":
+if 'page' in locals() and page == "Overview":
     # Centered Title
-    st.markdown("<h1 class='title'>🌍 Global Terrorism Overview</h1>", unsafe_allow_html=True)
+    st.markdown("""
+        <h1 class='title'>🌍 Global Terrorism Overview</h1>
+    """, unsafe_allow_html=True)
+    
+    # Overview Content
+    st.write("""
+    Terrorism remains one of the most complex and evolving threats to global security, with its impact stretching across nations, economies, and societies. The nature of terrorism has changed significantly over the decades, influenced by political conflicts, religious extremism, economic disparities, and advancements in technology.
+    
+    ## 🌎 Trends in Global Terrorism
+    - **Shifting Geographical Hotspots:** Middle East, Africa, and South Asia remain major hotspots, but new threats emerge in Latin America, Southeast Asia, and Europe.
+    - **Rise of Lone-Wolf and Cyber Terrorism:** Radicalization through online platforms and cyber-attacks are becoming more prevalent.
+    - **Use of Advanced Technology:** Terrorist groups leverage social media, encrypted communication, and drones.
+    - **State-Sponsored and Ideological Extremism:** Political influences and ideological movements contribute to modern terrorist threats.
+
+    ## ⚠️ Impact of Terrorism
+    - **Humanitarian Crisis:** Civilian casualties, displacement, and infrastructure destruction.
+    - **Economic Loss:** Disruption of trade, tourism, and investment.
+    - **Political Instability:** Government overthrows, authoritarian crackdowns, and prolonged conflicts.
+
+    ## 🛡️ Counterterrorism Efforts
+    Governments and international organizations (e.g., UN, NATO, INTERPOL) focus on military interventions, intelligence sharing, financial sanctions, and counter-radicalization programs.
+
+    ---
+    
+    Terrorism is an evolving global challenge that demands continuous adaptation through intelligence, international cooperation, and social reforms.
+    
+    """)
 
     # 📍 Region Selection (Now above the map)
     st.subheader("Select a Region")
