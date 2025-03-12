@@ -213,27 +213,11 @@ if 'page' in locals() and page == "Overview":
     
     # Overview Content
     st.write("""
-    Terrorism remains one of the most complex and evolving threats to global security, with its impact stretching across nations, economies, and societies. The nature of terrorism has changed significantly over the decades, influenced by political conflicts, religious extremism, economic disparities, and advancements in technology.
+    Terrorism is a global threat that evolves with political conflicts, economic disparities, and technological advancements. Regions like the Middle East, Africa, and South Asia remain major hotspots, while cyber and lone-wolf attacks are on the rise. Terrorist groups leverage social media, encrypted communication, and drones, increasing their reach and impact. 
     
-    ## 🌎 Trends in Global Terrorism
-    - **Shifting Geographical Hotspots:** Middle East, Africa, and South Asia remain major hotspots, but new threats emerge in Latin America, Southeast Asia, and Europe.
-    - **Rise of Lone-Wolf and Cyber Terrorism:** Radicalization through online platforms and cyber-attacks are becoming more prevalent.
-    - **Use of Advanced Technology:** Terrorist groups leverage social media, encrypted communication, and drones.
-    - **State-Sponsored and Ideological Extremism:** Political influences and ideological movements contribute to modern terrorist threats.
-
-    ## ⚠️ Impact of Terrorism
-    - **Humanitarian Crisis:** Civilian casualties, displacement, and infrastructure destruction.
-    - **Economic Loss:** Disruption of trade, tourism, and investment.
-    - **Political Instability:** Government overthrows, authoritarian crackdowns, and prolonged conflicts.
-
-    ## 🛡️ Counterterrorism Efforts
-    Governments and international organizations (e.g., UN, NATO, INTERPOL) focus on military interventions, intelligence sharing, financial sanctions, and counter-radicalization programs.
-
-    ---
-    
-    Terrorism is an evolving global challenge that demands continuous adaptation through intelligence, international cooperation, and social reforms.
-    
+    The consequences of terrorism include humanitarian crises, economic disruptions, and political instability. Governments and international bodies like the UN and NATO work to counteract threats through intelligence sharing, financial sanctions, and counter-radicalization programs. Addressing the root causes remains key to long-term solutions.
     """)
+
 
     # 📍 Region Selection (Now above the map)
     st.subheader("Select a Region")
