@@ -266,7 +266,7 @@ with col2:
 )
 st.plotly_chart(fig, use_container_width=True)
 else:
-        st.warning(f"No data available for {regions[selected_region]}.")
+   st.warning(f"No data available for {regions[selected_region]}.")
 
     # 📌 Country Selection (Now based on selected region)
     selected_country = st.selectbox("Select a Country:", region_countries[selected_region])
