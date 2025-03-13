@@ -265,7 +265,7 @@ with col2:
     projection="natural earth"
 )
 st.plotly_chart(fig, use_container_width=True)
-    else:
+else:
         st.warning(f"No data available for {regions[selected_region]}.")
 
     # 📌 Country Selection (Now based on selected region)
