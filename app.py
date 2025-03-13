@@ -208,8 +208,9 @@ if page == "Introduction":
 if 'page' in locals() and page == "Overview":
     # Centered Title
     st.markdown("""
-        <h1 style='text-align: center; font-size: 40px;'>🌍 Global Terrorism Overview</h1>
-    """, unsafe_allow_html=True)
+    <h1 style='text-align: center; font-size: 45px;'>🌍 Global Terrorism Overview</h1>
+    <h3 style='text-align: center; font-size: 20px; color: gray;'>Analyzing global terrorism trends, hotspots, and impacts.</h3>
+""", unsafe_allow_html=True)
 
     # Create a two-column layout (adjust column widths as needed)
     col1, col2 = st.columns([1, 2])  # 1: GIF, 2: Text
