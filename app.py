@@ -8,15 +8,6 @@ import base64
 import streamlit as st
 from statsmodels.tsa.holtwinters import Holt
 import numpy as np
-from streamlit_lottie import st_lottie
-import requests
-
-# Function to load Lottie animation from URL
-def load_lottie_url(url):
-    r = requests.get(url)
-    if r.status_code != 200:
-        return None
-    return r.json()
 
 # Encode the image as base64
 def get_base64_image(image_path):
