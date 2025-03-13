@@ -208,30 +208,18 @@ if 'page' in locals() and page == "Overview":
     """, unsafe_allow_html=True)
 
     # Create a two-column layout (adjust column widths as needed)
-    col1, col2 = st.columns([1, 2])  # 1: GIF, 2: Text
+    col1, col2 = st.columns([1, 2])
 
-    with col1:
-        st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGxsZmw3bTJnNmIyb3V1OXllZHNtaWFwbHNjbHF5ZzVlN3k2b2xveSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/cb89q6BvqAHfwH6AEU/giphy.gif", width=300)
+with col1:
+    st.image("https://media.giphy.com/media/cb89q6BvqAHfwH6AEU/giphy.gif", width=280)  # Adjust width
 
-    with col2:
-        st.markdown("""
-        <p style='font-size: 22px; font-weight: bold; line-height: 1.6;'>
-        Terrorism is a global threat that evolves with political conflicts, economic disparities, and technological advancements. 
-        Regions like the Middle East, Africa, and South Asia remain major hotspots, while cyber and lone-wolf attacks are on the rise. 
-        Terrorist groups leverage social media, encrypted communication, and drones, increasing their reach and impact.
+with col2:
+    st.markdown("""
+        <p style='font-size: 20px; line-height: 1.6;'>
+        Terrorism is a global threat that evolves with <b>political conflicts</b>, <b>economic disparities</b>, 
+        and <b>technological advancements</b>. Major hotspots include the Middle East, Africa, and South Asia.
         </p>
-
-        <p style='font-size: 22px; font-weight: bold; line-height: 1.6;'>
-        The consequences of terrorism include humanitarian crises, economic disruptions, and political instability. Governments and 
-        international bodies like the UN and NATO work to counteract threats through intelligence sharing, financial sanctions, 
-        and counter-radicalization programs. Addressing the root causes remains key to long-term solutions.
-        </p>
-        """, unsafe_allow_html=True)
-
-
-
-
-
+    """, unsafe_allow_html=True)
 
 
     # 📍 Region Selection (Now above the map)
@@ -267,15 +255,16 @@ if 'page' in locals() and page == "Overview":
     
     if not filtered_data.empty:
         fig = px.choropleth(
-            data_frame=filtered_data,
-            locations="Country",
-            locationmode="country names",
-            color="Incidents",
-            title=f"Terrorism Incidents in {regions[selected_region]}",
-            color_continuous_scale="purples",
-            template="plotly_dark"
-        )
-        st.plotly_chart(fig, use_container_width=True)
+    data_frame=filtered_data,
+    locations="Country",
+    locationmode="country names",
+    color="Incidents",
+    title=f"Terrorism Incidents in {selected_region}",
+    color_continuous_scale="Oranges",  # Better visibility
+    template="plotly_dark",
+    projection="natural earth"
+)
+st.plotly_chart(fig, use_container_width=True)
     else:
         st.warning(f"No data available for {regions[selected_region]}.")
 
@@ -286,18 +275,18 @@ if 'page' in locals() and page == "Overview":
     st.subheader(f"Insights for {selected_country}:")
     country_data = data[data["Country"] == selected_country]
 
-    if not country_data.empty:
-        incidents = country_data["Incidents"].sum()
-        most_common_attack = country_data["Attack Type"].mode()[0] if "Attack Type" in country_data else "N/A"
+   if not country_data.empty:
+    incidents = country_data["Incidents"].sum()
+    most_common_attack = country_data["Attack Type"].mode()[0] if "Attack Type" in country_data else "N/A"
 
-        st.markdown(f"🛑 *Total Incidents*: {incidents:,}")
-        st.markdown(f"🔥 *Most Common Attack Type*: {most_common_attack}")
-    else:
+    st.markdown(f"🔴 **Total Incidents:** <span style='font-size:24px;'>{incidents:,}</span>", unsafe_allow_html=True)
+    st.markdown(f"🔥 **Most Common Attack Type:** {most_common_attack}")
+   else:
         st.warning("No data available for the selected country.")
 
     st.markdown("---")  # Divider
 
-
+#EDA page
 elif page == "EDA":
     # Apply Seaborn theme for better aesthetics
     sns.set_style("whitegrid")
