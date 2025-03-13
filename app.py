@@ -253,7 +253,7 @@ with col2:
 # 🌍 Display Region-Specific Map
     st.subheader(f"Terrorism Incidents in {regions[selected_region]}")
     
-    if not filtered_data.empty:
+if not filtered_data.empty:
         fig = px.choropleth(
             data_frame=filtered_data,
             locations="Country",
@@ -264,7 +264,7 @@ with col2:
             template="plotly_dark"
         )
         st.plotly_chart(fig, use_container_width=True)
-    else:
+else:
         st.warning(f"No data available for {regions[selected_region]}.")
 
 
@@ -277,13 +277,13 @@ with col2:
     st.subheader(f"Insights for {selected_country}:")
     country_data = data[data["Country"] == selected_country]
 
-   if not country_data.empty:
+if not country_data.empty:
     incidents = country_data["Incidents"].sum()
     most_common_attack = country_data["Attack Type"].mode()[0] if "Attack Type" in country_data else "N/A"
 
     st.markdown(f"🔴 **Total Incidents:** <span style='font-size:24px;'>{incidents:,}</span>", unsafe_allow_html=True)
     st.markdown(f"🔥 **Most Common Attack Type:** {most_common_attack}")
-   else:
+else:
         st.warning("No data available for the selected country.")
 
     st.markdown("---")  # Divider
