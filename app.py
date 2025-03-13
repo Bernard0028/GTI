@@ -267,15 +267,18 @@ if 'page' in locals() and page == "Overview":
     
     if not filtered_data.empty:
         fig = px.choropleth(
-            data_frame=filtered_data,
-            locations="Country",
-            locationmode="country names",
-            color="Incidents",
-            title=f"Terrorism Incidents in {regions[selected_region]}",
-            color_continuous_scale="purples",
-            template="plotly_dark"
-        )
-        st.plotly_chart(fig, use_container_width=True)
+    data_frame=filtered_data,
+    locations="Country",
+    locationmode="country names",
+    color="Incidents",
+    hover_name="Country",  # Show country name on hover
+    hover_data={"Incidents": True},  # Show incident numbers
+    title=f"Terrorism Incidents in {regions[selected_region]}",
+    color_continuous_scale="reds",
+    template="plotly_dark",
+    projection="natural earth"
+)
+st.plotly_chart(fig, use_container_width=True)
     else:
         st.warning(f"No data available for {regions[selected_region]}.")
 
