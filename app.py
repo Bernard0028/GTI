@@ -211,15 +211,18 @@ if 'page' in locals() and page == "Overview":
         <h1 class='title'>🌍 Global Terrorism Overview</h1>
     """, unsafe_allow_html=True)
     
-    # Adding a Moving Image (GIF)
-    st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGxsZmw3bTJnNmIyb3V1OXllZHNtaWFwbHNjbHF5ZzVlN3k2b2xveSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/cb89q6BvqAHfwH6AEU/giphy.gif")
+    # Create two columns: One for the GIF, one for the text
+    col1, col2 = st.columns([1, 2])  # Adjust ratio as needed
 
-    # Overview Content
-    st.write("""
-    Terrorism is a global threat that evolves with political conflicts, economic disparities, and technological advancements. Regions like the Middle East, Africa, and South Asia remain major hotspots, while cyber and lone-wolf attacks are on the rise. Terrorist groups leverage social media, encrypted communication, and drones, increasing their reach and impact. 
-    
-    The consequences of terrorism include humanitarian crises, economic disruptions, and political instability. Governments and international bodies like the UN and NATO work to counteract threats through intelligence sharing, financial sanctions, and counter-radicalization programs. Addressing the root causes remains key to long-term solutions.
-    """)
+    with col1:
+        st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGxsZmw3bTJnNmIyb3V1OXllZHNtaWFwbHNjbHF5ZzVlN3k2b2xveSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/cb89q6BvqAHfwH6AEU/giphy.gif")
+
+    with col2:
+        st.write("""
+        Terrorism is a global threat that evolves with political conflicts, economic disparities, and technological advancements. Regions like the Middle East, Africa, and South Asia remain major hotspots, while cyber and lone-wolf attacks are on the rise. Terrorist groups leverage social media, encrypted communication, and drones, increasing their reach and impact. 
+        
+        The consequences of terrorism include humanitarian crises, economic disruptions, and political instability. Governments and international bodies like the UN and NATO work to counteract threats through intelligence sharing, financial sanctions, and counter-radicalization programs. Addressing the root causes remains key to long-term solutions.
+        """)
 
 
 
