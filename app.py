@@ -8,6 +8,12 @@ import base64
 import streamlit as st
 from statsmodels.tsa.holtwinters import Holt
 import numpy as np
+    
+
+
+
+
+
 
 # Encode the image as base64
 def get_base64_image(image_path):
@@ -199,30 +205,11 @@ if page == "Introduction":
 
 
 # 📊 Overview Page
-import streamlit as st
-
-if 'page' in locals() and page == "Overview":
+if page == "Overview":
     # Centered Title
-    st.markdown("""
-        <h1 style='text-align: center; font-size: 40px;'>🌍 Global Terrorism Overview</h1>
-    """, unsafe_allow_html=True)
+    st.markdown("<h1 class='title'>🌍 Global Terrorism Overview</h1>", unsafe_allow_html=True)
 
-    # Create a two-column layout (adjust column widths as needed)
-    col1, col2 = st.columns([1, 2])
-
-with col1:
-    st.image("https://media.giphy.com/media/cb89q6BvqAHfwH6AEU/giphy.gif", width=280)  # Adjust width
-
-with col2:
-    st.markdown("""
-        <p style='font-size: 20px; line-height: 1.6;'>
-        Terrorism is a global threat that evolves with <b>political conflicts</b>, <b>economic disparities</b>, 
-        and <b>technological advancements</b>. Major hotspots include the Middle East, Africa, and South Asia.
-        </p>
-    """, unsafe_allow_html=True)
-
-
-   # 📍 Region Selection (Now above the map)
+    # 📍 Region Selection (Now above the map)
     st.subheader("Select a Region")
     regions = {
         "NA": "North America",
@@ -286,7 +273,6 @@ with col2:
     st.markdown("---")  # Divider
 
 
-#EDA page
 elif page == "EDA":
     # Apply Seaborn theme for better aesthetics
     sns.set_style("whitegrid")
