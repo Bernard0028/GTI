@@ -278,7 +278,7 @@ if 'page' in locals() and page == "Overview":
     template="plotly_dark",
     projection="natural earth"
 )
-st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True)
     else:
         st.warning(f"No data available for {regions[selected_region]}.")
 
