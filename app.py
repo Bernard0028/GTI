@@ -210,14 +210,17 @@ if 'page' in locals() and page == "Overview":
     st.markdown("""
         <h1 class='title'>🌍 Global Terrorism Overview</h1>
     """, unsafe_allow_html=True)
-   gif_url = "https://tenor.com/view/terrorist-dance-gif-19468443"
-    st.markdown(f"<img src='{gif_url}' width='700' style='display: block; margin: auto;'>", unsafe_allow_html=True)
+    
+    # Adding a Moving Image (GIF)
+    st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGxsZmw3bTJnNmIyb3V1OXllZHNtaWFwbHNjbHF5ZzVlN3k2b2xveSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/cb89q6BvqAHfwH6AEU/giphy.gif", caption="Global Security and Terrorism")
+
     # Overview Content
     st.write("""
     Terrorism is a global threat that evolves with political conflicts, economic disparities, and technological advancements. Regions like the Middle East, Africa, and South Asia remain major hotspots, while cyber and lone-wolf attacks are on the rise. Terrorist groups leverage social media, encrypted communication, and drones, increasing their reach and impact. 
     
     The consequences of terrorism include humanitarian crises, economic disruptions, and political instability. Governments and international bodies like the UN and NATO work to counteract threats through intelligence sharing, financial sanctions, and counter-radicalization programs. Addressing the root causes remains key to long-term solutions.
     """)
+
 
 
     # 📍 Region Selection (Now above the map)
