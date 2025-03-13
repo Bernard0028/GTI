@@ -8,12 +8,15 @@ import base64
 import streamlit as st
 from statsmodels.tsa.holtwinters import Holt
 import numpy as np
-    
+from streamlit_lottie import st_lottie
+import requests
 
-
-
-
-
+# Function to load Lottie animation from URL
+def load_lottie_url(url):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
 
 # Encode the image as base64
 def get_base64_image(image_path):
@@ -205,17 +208,20 @@ if page == "Introduction":
 
 
 # 📊 Overview Page
+# Load a Lottie animation from a URL
+lottie_animation = load_lottie_url("https://app.lottiefiles.com/share/0a8d3b04-1d3a-4350-bc64-93e9eb820d21.json")
+
 if 'page' in locals() and page == "Overview":
     # Centered Title
     st.markdown("""
         <h1 style='text-align: center; font-size: 40px;'>🌍 Global Terrorism Overview</h1>
     """, unsafe_allow_html=True)
 
-    # Create a two-column layout (adjust column widths as needed)
-    col1, col2 = st.columns([1, 2])  # 1: GIF, 2: Text
+    # Create a two-column layout
+    col1, col2 = st.columns([1, 2])  # Adjust widths as needed
 
     with col1:
-        st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGxsZmw3bTJnNmIyb3V1OXllZHNtaWFwbHNjbHF5ZzVlN3k2b2xveSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/cb89q6BvqAHfwH6AEU/giphy.gif", width=300)
+        st_lottie(lottie_animation, height=250, key="terrorism_lottie")
 
     with col2:
         st.markdown("""
@@ -231,6 +237,7 @@ if 'page' in locals() and page == "Overview":
         and counter-radicalization programs. Addressing the root causes remains key to long-term solutions.
         </p>
         """, unsafe_allow_html=True)
+
 
 
 
