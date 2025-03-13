@@ -299,17 +299,7 @@ if 'page' in locals() and page == "Overview":
         st.warning("No data available for the selected country.")
 
     st.markdown("---")  # Divider
-    attack_counts = country_data["Attack Type"].value_counts().head(5)
-    fig2 = px.bar(
-        x=attack_counts.index,
-        y=attack_counts.values,
-        labels={"x": "Attack Type", "y": "Number of Incidents"},
-        title="Top 5 Most Common Attack Types",
-        color=attack_counts.values,
-        color_continuous_scale="inferno"
-    )
-    st.plotly_chart(fig2, use_container_width=True)
-
+    
 
 elif page == "EDA":
     # Apply Seaborn theme for better aesthetics
