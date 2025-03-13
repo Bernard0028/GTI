@@ -222,7 +222,7 @@ with col2:
     """, unsafe_allow_html=True)
 
 
-    # 📍 Region Selection (Now above the map)
+   # 📍 Region Selection (Now above the map)
     st.subheader("Select a Region")
     regions = {
         "NA": "North America",
@@ -250,10 +250,10 @@ with col2:
     # 🌍 Filter data based on selected region
     filtered_data = data[data["Country"].isin(region_countries[selected_region])]
 
-# 🌍 Display Region-Specific Map
+    # 🌍 Display Region-Specific Map
     st.subheader(f"Terrorism Incidents in {regions[selected_region]}")
     
-if not filtered_data.empty:
+    if not filtered_data.empty:
         fig = px.choropleth(
             data_frame=filtered_data,
             locations="Country",
@@ -264,30 +264,26 @@ if not filtered_data.empty:
             template="plotly_dark"
         )
         st.plotly_chart(fig, use_container_width=True)
-else:
+    else:
         st.warning(f"No data available for {regions[selected_region]}.")
 
+    # 📌 Country Selection (Now based on selected region)
+    selected_country = st.selectbox("Select a Country:", region_countries[selected_region])
 
+    # 📊 Insights from dataset
+    st.subheader(f"Insights for {selected_country}:")
+    country_data = data[data["Country"] == selected_country]
 
+    if not country_data.empty:
+        incidents = country_data["Incidents"].sum()
+        most_common_attack = country_data["Attack Type"].mode()[0] if "Attack Type" in country_data else "N/A"
 
-# 📌 Country Selection (Now based on selected region)
-selected_country = st.selectbox("Select a Country:", region_countries[selected_region])
+        st.markdown(f"🛑 *Total Incidents*: {incidents:,}")
+        st.markdown(f"🔥 *Most Common Attack Type*: {most_common_attack}")
+    else:
+        st.warning("No data available for the selected country.")
 
-# 📊 Insights from dataset
-st.subheader(f"Insights for {selected_country}:")
-country_data = data[data["Country"] == selected_country]
-
-# ✅ Indent properly
-if not country_data.empty:
-    incidents = country_data["Incidents"].sum()
-    most_common_attack = country_data["Attack Type"].mode()[0] if "Attack Type" in country_data else "N/A"
-
-    st.markdown(f"🔴 **Total Incidents:** <span style='font-size:24px;'>{incidents:,}</span>", unsafe_allow_html=True)
-    st.markdown(f"🔥 **Most Common Attack Type:** {most_common_attack}")
-else:
-    st.warning("No data available for the selected country.")  # ✅ Correct indentation
-
-st.markdown("---")  # Divider
+    st.markdown("---")  # Divider
 
 
 #EDA page
