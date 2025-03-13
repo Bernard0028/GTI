@@ -250,9 +250,9 @@ with col2:
     # 🌍 Filter data based on selected region
     filtered_data = data[data["Country"].isin(region_countries[selected_region])]
 
-    # 🌍 Display Region-Specific Map
-    st.subheader(f"Terrorism Incidents in {regions[selected_region]}")
-    
+# 🌍 Display Region-Specific Map
+st.subheader(f"Terrorism Incidents in {regions[selected_region]}")
+
 if not filtered_data.empty:
     fig = px.choropleth(
         data_frame=filtered_data,
@@ -260,13 +260,14 @@ if not filtered_data.empty:
         locationmode="country names",
         color="Incidents",
         title=f"Terrorism Incidents in {regions[selected_region]}",
-        color_continuous_scale="Oranges",
+        color_continuous_scale="Oranges",  # Better visibility
         template="plotly_dark",
         projection="natural earth"
     )
-    st.plotly_chart(fig, use_container_width=True)  # ✅ Now inside `if`
+    st.plotly_chart(fig, use_container_width=True)  # ✅ Proper indentation
 else:
-    st.warning(f"No data available for {regions[selected_region]}.")  # ✅ `else` properly matched
+    st.warning(f"No data available for {regions[selected_region]}.")  # ✅ Properly placed in `else`
+
 
 
     # 📌 Country Selection (Now based on selected region)
