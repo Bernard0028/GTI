@@ -213,7 +213,7 @@ if 'page' in locals() and page == "Overview":
 """, unsafe_allow_html=True)
 
     # Create a two-column layout (adjust column widths as needed)
-    col1, col2 = st.columns([1, 2])  # 1: GIF, 2: Text
+    col1, col2 = st.columns([1.2, 2])  # 1: GIF, 2: Text
 
     with col1:
         st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGxsZmw3bTJnNmIyb3V1OXllZHNtaWFwbHNjbHF5ZzVlN3k2b2xveSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/cb89q6BvqAHfwH6AEU/giphy.gif", width=250)
