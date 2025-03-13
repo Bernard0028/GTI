@@ -270,13 +270,14 @@ else:
 
 
 
-    # 📌 Country Selection (Now based on selected region)
-    selected_country = st.selectbox("Select a Country:", region_countries[selected_region])
+# 📌 Country Selection (Now based on selected region)
+selected_country = st.selectbox("Select a Country:", region_countries[selected_region])
 
-    # 📊 Insights from dataset
-    st.subheader(f"Insights for {selected_country}:")
-    country_data = data[data["Country"] == selected_country]
+# 📊 Insights from dataset
+st.subheader(f"Insights for {selected_country}:")
+country_data = data[data["Country"] == selected_country]
 
+# ✅ Indent properly
 if not country_data.empty:
     incidents = country_data["Incidents"].sum()
     most_common_attack = country_data["Attack Type"].mode()[0] if "Attack Type" in country_data else "N/A"
@@ -284,9 +285,10 @@ if not country_data.empty:
     st.markdown(f"🔴 **Total Incidents:** <span style='font-size:24px;'>{incidents:,}</span>", unsafe_allow_html=True)
     st.markdown(f"🔥 **Most Common Attack Type:** {most_common_attack}")
 else:
-        st.warning("No data available for the selected country.")
+    st.warning("No data available for the selected country.")  # ✅ Correct indentation
 
-    st.markdown("---")  # Divider
+st.markdown("---")  # Divider
+
 
 #EDA page
 elif page == "EDA":
