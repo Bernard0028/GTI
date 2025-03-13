@@ -253,20 +253,21 @@ with col2:
     # 🌍 Display Region-Specific Map
     st.subheader(f"Terrorism Incidents in {regions[selected_region]}")
     
-    if not filtered_data.empty:
-        fig = px.choropleth(
-    data_frame=filtered_data,
-    locations="Country",
-    locationmode="country names",
-    color="Incidents",
-    title=f"Terrorism Incidents in {selected_region}",
-    color_continuous_scale="Oranges",  # Better visibility
-    template="plotly_dark",
-    projection="natural earth"
-)
-st.plotly_chart(fig, use_container_width=True)
+if not filtered_data.empty:
+    fig = px.choropleth(
+        data_frame=filtered_data,
+        locations="Country",
+        locationmode="country names",
+        color="Incidents",
+        title=f"Terrorism Incidents in {regions[selected_region]}",
+        color_continuous_scale="Oranges",
+        template="plotly_dark",
+        projection="natural earth"
+    )
+    st.plotly_chart(fig, use_container_width=True)  # ✅ Now inside `if`
 else:
-   st.warning(f"No data available for {regions[selected_region]}.")
+    st.warning(f"No data available for {regions[selected_region]}.")  # ✅ `else` properly matched
+
 
     # 📌 Country Selection (Now based on selected region)
     selected_country = st.selectbox("Select a Country:", region_countries[selected_region])
