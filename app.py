@@ -237,13 +237,13 @@ if 'page' in locals() and page == "Overview":
     # 📍 Region Selection (Now above the map)
     st.subheader("Select a Region")
     regions = {
-    "NA": "🌎 North America",
-    "EU": "🇪🇺 Europe",
-    "SA": "🌎 South America",
-    "AF": "🌍 Africa",
-    "AS": "🌏 Asia",
-    "ME": "🕌 Middle East",
-    "OC": "🏝️ Oceania"
+    "NA": "North America",
+    "EU": "Europe",
+    "SA": "South America",
+    "AF": "Africa",
+    "AS": "Asia",
+    "ME": "Middle East",
+    "OC": "Oceania"
     }
 
     selected_region = st.radio("📍 Select a Region:", list(regions.keys()), horizontal=True, format_func=lambda x: regions[x])
