@@ -6,8 +6,9 @@ import plotly.express as px
 from PIL import Image
 import base64
 import streamlit as st
-from statsmodels.tsa.holtwinters import Holt
 import numpy as np
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+import plotly.graph_objects as go
     
 
 
@@ -26,6 +27,12 @@ image_base64 = get_base64_image("istockphoto-106492379-612x612.jpg")
 
 # Load Data
 data = pd.read_csv("Global Terrorism Index 2023.csv")
+
+
+
+
+
+
 
 # Load Image for Introduction Page
 image = Image.open("istockphoto-106492379-612x612.jpg")
@@ -200,53 +207,24 @@ if page == "Introduction":
 
 
 
-
-
-
-
 # 📊 Overview Page
-if 'page' in locals() and page == "Overview":
+if page == "Overview":
     # Centered Title
-    st.markdown("""
-    <h1 style='text-align: center; font-size: 45px;'>🌍 Global Terrorism Overview</h1>
-    <h3 style='text-align: center; font-size: 20px; color: gray;'>Analyzing global terrorism trends, hotspots, and impacts.</h3>
-""", unsafe_allow_html=True)
-
-    # Create a two-column layout (adjust column widths as needed)
-    col1, col2 = st.columns([1.2, 2])  # 1: GIF, 2: Text
-
-    with col1:
-        st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGxsZmw3bTJnNmIyb3V1OXllZHNtaWFwbHNjbHF5ZzVlN3k2b2xveSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/cb89q6BvqAHfwH6AEU/giphy.gif", width=400)
-
-    with col2:
-        st.markdown("""
-        <p style='font-size: 20px; font-weight: bold; text-align: justify; line-height: 1.6;'>
-        Terrorism is a global threat that evolves with political conflicts, economic disparities, and technological advancements. 
-        Regions like the Middle East, Africa, and South Asia remain major hotspots, while cyber and lone-wolf attacks are on the rise. 
-        Terrorist groups leverage social media, encrypted communication, and drones, increasing their reach and impact.
-        </p>
-
-        <p style='font-size: 20px; font-weight: bold; text-align: justify; line-height: 1.6;'>
-        The consequences of terrorism include humanitarian crises, economic disruptions, and political instability. Governments and 
-        international bodies like the UN and NATO work to counteract threats through intelligence sharing, financial sanctions, 
-        and counter-radicalization programs. Addressing the root causes remains key to long-term solutions.
-        </p>
-        """, unsafe_allow_html=True)
-
+    st.markdown("<h1 class='title'>🌍 Global Terrorism Overview</h1>", unsafe_allow_html=True)
 
     # 📍 Region Selection (Now above the map)
     st.subheader("Select a Region")
     regions = {
-    "NA": "North America",
-    "EU": "Europe",
-    "SA": "South America",
-    "AF": "Africa",
-    "AS": "Asia",
-    "ME": "Middle East",
-    "OC": "Oceania"
+        "NA": "North America",
+        "EU": "Europe",
+        "SA": "South America",
+        "AF": "Africa",
+        "AS": "Asia",
+        "ME": "Middle East",
+        "OC": "Oceania"
     }
-
-    selected_region = st.radio("📍 Select a Region:", list(regions.keys()), horizontal=True, format_func=lambda x: regions[x])
+    
+    selected_region = st.radio("Map Scope Selection", list(regions.keys()), horizontal=True, format_func=lambda x: regions[x])
 
     # 🌍 Define countries per region
     region_countries = {
@@ -267,17 +245,14 @@ if 'page' in locals() and page == "Overview":
     
     if not filtered_data.empty:
         fig = px.choropleth(
-    data_frame=filtered_data,
-    locations="Country",
-    locationmode="country names",
-    color="Incidents",
-    hover_name="Country",  # Show country name on hover
-    hover_data={"Incidents": True},  # Show incident numbers
-    title=f"Terrorism Incidents in {regions[selected_region]}",
-    color_continuous_scale="reds",
-    template="plotly_dark",
-    projection="natural earth"
-)
+            data_frame=filtered_data,
+            locations="Country",
+            locationmode="country names",
+            color="Incidents",
+            title=f"Terrorism Incidents in {regions[selected_region]}",
+            color_continuous_scale="purples",
+            template="plotly_dark"
+        )
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.warning(f"No data available for {regions[selected_region]}.")
@@ -293,26 +268,55 @@ if 'page' in locals() and page == "Overview":
         incidents = country_data["Incidents"].sum()
         most_common_attack = country_data["Attack Type"].mode()[0] if "Attack Type" in country_data else "N/A"
 
-        st.markdown(f"🛑 *Total Incidents*: {incidents:,}")
-        st.markdown(f"🔥 *Most Common Attack Type*: {most_common_attack}")
+        st.markdown(f"🛑 Total Incidents: {incidents:,}")
+        st.markdown(f"🔥 Most Common Attack Type: {most_common_attack}")
     else:
         st.warning("No data available for the selected country.")
 
     st.markdown("---")  # Divider
-    
+
 
 elif page == "EDA":
     # Apply Seaborn theme for better aesthetics
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
 
-    st.markdown("<p class='title'>🔍 Exploratory Data Analysis (EDA)</p>", unsafe_allow_html=True)
+    if "show_eda" not in st.session_state:
+     st.session_state.show_eda = False
     
-    # Create tabs for different EDA sections
-    tab1, tab2, tab3 = st.tabs(["📌 Top 10 Countries", "📊 Data Exploration", "📈 Visualization"])
+    if not st.session_state.show_eda:
+      st.markdown("""
+        <h1 style='text-align: center; color: #3366CC;'>🔍 Exploratory Data Analysis (EDA)</h1>
+        <p style='text-align: center; font-size:18px;'>
+            Welcome to the *Exploratory Data Analysis Dashboard*!  
+            In this section, we take a deep dive into the *Global Terrorism Index 2023* dataset to uncover key insights.  
+            Through interactive visualizations and statistical analysis, we aim to answer crucial questions, such as:
+        </p>
+        <ul>
+            <li>📌 Which countries experience the highest number of terrorist incidents?</li>
+            <li>📈 How have terrorist incidents, fatalities, and injuries evolved over time?</li>
+            <li>🔥 What factors are most correlated with terrorism severity?</li>
+            <li>🌍 How do terrorist incidents vary across different regions, and which areas are most affected?</li>
+        </ul>
+        <p style='text-align: center;'>Understanding these patterns is essential for policymakers, security agencies, and researchers working towards a safer world.</p>
+        <hr style='border: 1px solid #ddd;'>
+        <p style='text-align: center; font-size:16px; color:gray;'>
+            👉 Click <b>'Explore Data 🔍'</b> to explore the data.
+        </p>
+    """, unsafe_allow_html=True)
 
+      image = Image.open("11.webp")  
+      st.image(image, use_container_width=True)
+    
+    if st.button("Explore Data 🔍", key="explore_button"):
+        st.session_state.show_eda = True
+        st.rerun()
+   
+    if st.session_state.show_eda:
+     tab1, tab2, tab3, tab4 = st.tabs(["📌 Top 10 Countries", "📈 Global Terrorism Trends Over the Years", "🔥 Terrorism Score vs Severity","🌍 Geographic Analysis"])
+     
     # 📌 Top 10 Most Affected Countries
-    with tab1:
+     with tab1:
         st.markdown("## 📌 Top 10 Most Affected Countries")
         
         # Aggregating data to find top affected countries
@@ -334,49 +338,167 @@ elif page == "EDA":
         ax.set_title("Top 10 Countries with Highest Terrorism Incidents")
         st.pyplot(fig)
 
-    # 📊 General Data Exploration
-    with tab2:
-        st.markdown("## 🔍 Explore the Data")
 
-        col1, col2 = st.columns(2)
+        st.markdown("""
+         <h2 style='text-align: center;'>Global Terrorism Impact: Top 10 Most Affected Countries</h2>
+         <p style='font-size:18px;'>
+         This visualization presents the top 10 countries most affected by terrorism, combining bar charts, data tables, and horizontal bar plots to provide a comprehensive view of terrorism incidents worldwide.  
+         The data clearly illustrates the unequal distribution of terrorist attacks, with some nations experiencing significantly higher numbers of incidents compared to others.
+         </p>
 
-        with col1:
-            st.subheader("📍 Incidents by Country")
-            st.write(data["Country"].value_counts())
+         <p style='font-size:18px;'>
+         From the data, it is evident that Iraq, Afghanistan, Pakistan, and Somalia bear the highest burden of terrorist activities, with incident numbers far exceeding those in other regions.  
+         A sharp decline in incidents is observed from India onwards, indicating that the impact of terrorism is not evenly distributed geographically but rather concentrated in specific regions.  
+         Certain countries are significantly more vulnerable to attacks compared to others, emphasizing the need for targeted security measures and geopolitical analysis.
+         </p>
+        """, unsafe_allow_html=True)
 
-        with col2:
-            st.subheader("📆 Incidents by Year")
-            st.write(data["Year"].value_counts())
 
-    # 📈 Visualization of Terrorism Trends
-    with tab3:
-        st.markdown("## 📈 Visualizing Terrorism Trends")
 
-        # Group by Year and Sum Incidents
-        incidents_by_year = data.groupby("Year")["Incidents"].sum().reset_index()
+    # 📈 Global Terrorism Trends Over the Years
+     with tab2:
+        st.markdown("## 📈 Global Terrorism Trends Over the Years")
 
-        # Line Chart
+   
+        file_path = "Global Terrorism Index 2023.csv"
+        df = pd.read_csv(file_path)
+
+    
+        global_trend = df.groupby("Year").agg({
+            "Incidents": "sum",
+            "Fatalities": "sum",
+            "Injuries": "sum"
+        }).reset_index()
+
+    
+        st.write("### Yearly Aggregated Data")
+        st.dataframe(global_trend) 
+
+    
         fig, ax = plt.subplots(figsize=(10, 5))
-        sns.lineplot(x="Year", y="Incidents", data=incidents_by_year, marker="o", color="red", ax=ax)
+
+        ax.plot(global_trend["Year"], global_trend["Incidents"], marker="o", linestyle="-", label="Total Incidents")
+        ax.plot(global_trend["Year"], global_trend["Fatalities"], marker="s", linestyle="--", label="Total Fatalities", alpha=0.7)
+        ax.plot(global_trend["Year"], global_trend["Injuries"], marker="^", linestyle=":", label="Total Injuries", alpha=0.7)
+
         ax.set_xlabel("Year")
-        ax.set_ylabel("Total Incidents")
-        ax.set_title("Trend of Terrorism Incidents Over Time")
+        ax.set_ylabel("Count")
+        ax.set_title("Global Terrorism Incidents, Fatalities, and Injuries (Yearly)")
+        ax.legend()
         ax.grid(True)
+
+    
         st.pyplot(fig)
 
-        # 🌍 World Heatmap (Choropleth)
+        st.markdown("""
+          <h2 style='text-align: center;'>Global Terrorism Trends (2012-2022)</h2>
+          <p style='font-size:18px;'>
+          This line chart illustrates the trends in global terrorist incidents (Total Incidents), fatalities (Total Fatalities), and injuries (Total Injuries) from 2012 to 2022. 
+          </p>
+
+          <p style='font-size:18px;'>
+          From the chart, it is evident that the total number of terrorist incidents (green) has remained relatively stable, with annual occurrences generally ranging between 4,000 and 6,000, indicating that terrorism continues to persist. This could be attributed to enhanced security measures or improvements in medical standards.  
+
+          Fatalities (orange) peaked between 2014 and 2016 but have gradually declined, suggesting that the lethality of attacks has decreased over time.  
+ 
+          Injuries (blue) fluctuated significantly between 2012 and 2017 but showed an overall downward trend afterward, indicating that while the impact of terrorist attacks varied, their overall destructive capacity has diminished, potentially due to changes in attack methods.  
+
+          Despite the decline in casualties, terrorism remains a global security threat, necessitating continuous monitoring and preventive measures.
+          </p>
+         """, unsafe_allow_html=True)
+
+    #🔥 Terrorism Score vs Severity
+     with tab3:
+        st.markdown("## 🔥 Correlation Heatmap: Terrorism Score vs Severity")
+        st.write("This heatmap visualizes the correlation between terrorism scores, attack incidents, fatalities, injuries, and hostage situations.")
+
+        selected_columns = ['Score', 'Incidents', 'Fatalities', 'Injuries', 'Hostages']
+        correlation_matrix = df[selected_columns].corr()
+
+        fig, ax = plt.subplots(figsize=(8, 6))
+        sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", fmt=".2f", linewidths=0.5, ax=ax)
+        plt.title("Correlation Heatmap: Terrorism Score vs Severity")
+         
+        st.pyplot(fig)
+         
+        st.markdown("""
+          <h2 style='text-align: center;'> Insights from the Correlation Heatmap</h2>
+
+          <p style='font-size:18px;'>
+          From the heatmap, we can observe the following trends:
+          </p>
+
+          <ul style='font-size:18px;'>
+          <li><b>Terrorism Score (Score)</b> and <b>Terrorist Incidents (Incidents)</b> have a correlation of <b>0.52</b>, indicating that countries with higher scores tend to experience more terrorist attacks. However, the correlation is not very strong, suggesting that the score may also be influenced by other factors.</li>
+
+          <li><b>Terrorist Incidents (Incidents)</b> are highly correlated with <b>Fatalities (Fatalities)</b> and <b>Injuries (Injuries)</b>, meaning that more attacks generally result in higher casualties.</li>
+
+          <li><b>Fatalities (Fatalities)</b> and <b>Injuries (Injuries)</b> have a correlation of <b>0.91</b>, suggesting that a single terrorist attack often results in both deaths and injuries.</li>
+
+          <li><b>Hostage Numbers (Hostages)</b> show lower correlation with other variables (maximum <b>0.32</b>), indicating that hostage-taking incidents may not be directly related to general terrorist attacks or their casualties, and might involve different attack patterns.</li>
+          </ul>
+
+          <p style='font-size:18px;'>
+          This analysis provides a quantitative view of how different terrorism-related factors interact, helping policymakers and researchers understand the broader impact of terrorist activities.
+          </p>
+          """, unsafe_allow_html=True)
+
+
+   
+
+
+        
+    # 🌍 Geographic Analysis
+     with tab4:
+        st.markdown("## 🌍 Global Terrorism Incidents by Country")
+        st.write("This map visualizes the distribution of terrorist incidents around the world based on the frequency of attacks.")
+         
+        df_geo = df[['Country', 'Incidents']].groupby('Country').sum().reset_index()
+
+
+        country_corrections = {
+        "United States of America": "United States",
+        "Cote d' Ivoire": "Ivory Coast",
+        "Democratic Republic of the Congo": "Congo (Kinshasa)",
+        "Republic of the Congo": "Congo (Brazzaville)"
+       }
+        df_geo["Country"] = df_geo["Country"].replace(country_corrections)
+
+        df_geo["Incidents"] = pd.to_numeric(df_geo["Incidents"], errors="coerce").fillna(0)
+        
         fig = px.choropleth(
-            data, 
-            locations="iso3c", 
-            color="Incidents",
-            hover_name="Country",
-            title="Global Terrorism Intensity",
-            color_continuous_scale="Reds",
-            projection="natural earth"
-        )
-        st.plotly_chart(fig)
+           df_geo,
+           locations="Country",
+           locationmode="country names",
+           color="Incidents",
+           hover_name="Country",
+           hover_data=["Incidents"],
+           color_continuous_scale="Reds",
+           title="Global Distribution of Terrorist Incidents",
+           range_color=(0, df_geo['Incidents'].max())  
+       )
+        st.plotly_chart(fig, use_container_width=True)
 
+        st.markdown("""
+            <h3 style='text-align: center;'> Global Terrorism Incident Distribution</h3>
 
+            <p style='font-size:18px;'>
+            This map reveals that <b>Iraq</b> is the country most severely affected by terrorism, with the highest number of incidents.  
+            Countries in <b>South Asia</b>, such as <b>Pakistan</b> and <b>India</b>, as well as <b>Middle Eastern nations</b> like <b>Syria</b> and <b>Afghanistan</b>, exhibit a high frequency of terrorist attacks, indicating that these regions remain major hotspots for terrorism.  
+            </p>
+
+            <p style='font-size:18px;'>
+            Compared to the Middle East and South Asia, <b>Africa</b> has relatively fewer terrorist incidents, but countries such as <b>Somalia, Nigeria, and Burkina Faso</b> still experience a significant level of terrorist activity, as indicated by the darker colors on the map.  
+            </p>
+
+            <p style='font-size:18px;'>
+            Most <b>Western countries</b> (such as the <b>United States, Canada, Australia, and European nations</b>) appear in lighter shades, suggesting fewer terrorist incidents. This may indicate more effective security controls and counter-terrorism measures in these countries.
+            </p>
+
+            <p style='font-size:18px; font-weight: bold; color: #D32F2F;'>
+            These trends highlight the importance of the global fight against terrorism, particularly the need to strengthen security measures and international cooperation in conflict-prone regions to reduce the threat of terrorism.
+            </p>
+            """, unsafe_allow_html=True)
 
 
 
@@ -385,71 +507,159 @@ elif page == "EDA":
 
 
 
-
-elif page == "Prediction":
-    # Apply Seaborn theme for better aesthetics
+if page == "Prediction":
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
+    
+    # Title for the Prediction Page
+    st.markdown("<p class='title'> Terrorism Incident Prediction</p>", unsafe_allow_html=True)
+    st.write("""
+    This application predicts future terrorism incidents using *SARIMA (Seasonal ARIMA)*, 
+    a robust time-series forecasting model. It captures trends, seasonality, and irregular patterns 
+    in historical data to provide accurate predictions.
+    """)
 
-    st.markdown("<p class='title'>📈 Terrorism Incident Prediction</p>", unsafe_allow_html=True)
-    st.write("This application predicts future terrorism incidents based on historical data using Holt's Exponential Smoothing.")
-
+    # Section: Top 5 Countries with the Most Incidents
+    st.subheader("Top 5 Countries with the Most Terrorism Incidents")
+    st.write("""
+    Below is an interactive bar chart showing the top 5 countries with the highest number of terrorism incidents. 
+    These countries are identified based on the total number of incidents recorded in the dataset.
+    """)
+    
+    # Aggregate data for top 5 countries
+    top_countries = (
+        data.groupby("Country")["Incidents"].sum()
+        .reset_index()
+        .sort_values(by="Incidents", ascending=False)
+        .head(5)
+    )
+    
+    # Create an interactive bar chart using Plotly
+    fig_top5 = go.Figure()
+    fig_top5.add_trace(go.Bar(
+        x=top_countries["Incidents"],
+        y=top_countries["Country"],
+        orientation="h",
+        marker=dict(color=top_countries["Incidents"], colorscale="Reds"),
+        text=top_countries["Incidents"],
+        textposition="outside",
+    ))
+    fig_top5.update_layout(
+        title="Top 5 Countries with the Most Terrorism Incidents",
+        xaxis_title="Total Incidents",
+        yaxis_title="Country",
+        font=dict(size=14, family="Arial, sans-serif"),
+        template="plotly_white",
+        margin=dict(l=100, r=50, t=80, b=50),
+        hovermode="y unified",
+    )
+    st.plotly_chart(fig_top5, use_container_width=True)
+    
+    # Display the top 5 countries as a table
+    st.subheader("Top 5 Countries with the Most Terrorism Incidents Data")
+    st.dataframe(top_countries)
+    
+    # Section: Country-Specific Prediction
+    st.subheader("Predict Future Terrorism Incidents for a Specific Country")
+    st.write("""
+    Use the dropdown menu below to select a country and predict future terrorism incidents.
+    """)
+    
     # Country selection
     selected_country = st.selectbox("Select a country:", sorted(data["Country"].unique()))
-
+    
     # Filter data by the selected country
     country_data = data[data["Country"] == selected_country]
-
+    
     if country_data.empty:
-        st.warning("No data available for the selected country.")
+        st.warning(f"No data available for {selected_country}. Unable to make predictions.")
     else:
         # Group by Year and sum incidents
         incidents_by_year = country_data.groupby("Year")["Incidents"].sum().reset_index()
-
-        if incidents_by_year.empty:
-            st.warning("No incident data available for the selected country.")
+        
+        if incidents_by_year.empty or incidents_by_year["Incidents"].sum() == 0:
+            st.warning(f"No incidents recorded for {selected_country}. Unable to make predictions.")
+        elif len(incidents_by_year) < 5:
+            st.warning(f"Not enough data to make predictions for {selected_country}.")
         else:
-            # Fit the Holt model
-            model = Holt(incidents_by_year["Incidents"])
-            fit = model.fit(smoothing_level=0.2, smoothing_trend=0.1, optimized=True)
-
-            # Ensure non-negative fitted values
-            fitted_values = np.maximum(fit.fittedvalues, 0)
-
+            # Ensure data is sorted by year
+            incidents_by_year = incidents_by_year.sort_values(by="Year")
+            
+            # Fit the SARIMA model
+            try:
+                model = SARIMAX(
+                    incidents_by_year["Incidents"],
+                    order=(1, 1, 1),  # Non-seasonal part: (p, d, q)
+                    seasonal_order=(1, 1, 1, 12),  # Seasonal part: (P, D, Q, S)
+                    enforce_stationarity=False,
+                    enforce_invertibility=False
+                )
+                fit = model.fit(disp=False)
+            except Exception as e:
+                st.error(f"Model fitting failed: {e}")
+                st.stop()
+            
             # User input for number of years to predict
             num_years_to_predict = st.slider("Select number of years to predict:", 1, 10, 5)
             last_year = incidents_by_year["Year"].max()
             forecast_years = list(range(last_year + 1, last_year + num_years_to_predict + 1))
-
-            # Ensure non-negative forecast values
-            forecast_values = np.maximum(fit.forecast(len(forecast_years)), 0)
-
-            # Plot results
-            fig, ax = plt.subplots(figsize=(12, 6))
-
-            # Actual Data
-            ax.plot(incidents_by_year["Year"], incidents_by_year["Incidents"], 
-                    marker="o", markersize=7, linewidth=2, label="Actual Data", color="#4C72B0")
-
-            # Fitted Trend
-            ax.plot(incidents_by_year["Year"], fitted_values, linestyle="dashed", linewidth=2, 
-                    color="red", label="Fitted Trend")
-
-            # Forecast
-            ax.plot(forecast_years, forecast_values, linestyle="dashed", marker="o", markersize=7, 
-                    linewidth=2, color="green", label="Forecast")
-
-            # Labels and Styling
-            ax.set_xlabel("Year", fontsize=14, fontweight="bold")
-            ax.set_ylabel("Total Incidents", fontsize=14, fontweight="bold")
-            ax.set_title(f"Incident Prediction for {selected_country}", fontsize=16, fontweight="bold")
-            ax.legend(fontsize=12)
-            ax.grid(alpha=0.3)
-
-            # Show plot in Streamlit
-            st.pyplot(fig)
-
-            # Display forecast values
+            
+            # Generate forecasts
+            forecast = fit.get_forecast(steps=num_years_to_predict)
+            forecast_values = np.maximum(forecast.predicted_mean, 0)  # Ensure non-negative predictions
+            
+            # Improved graph visualization using Plotly
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(
+                x=incidents_by_year["Year"],
+                y=incidents_by_year["Incidents"],
+                mode="lines+markers",
+                name="Actual Data",
+                line=dict(color="#4C72B0", width=2),
+                marker=dict(size=8)
+            ))
+            fig.add_trace(go.Scatter(
+                x=forecast_years,
+                y=forecast_values,
+                mode="lines+markers",
+                name="Forecast",
+                line=dict(color="green", width=2, dash="dash"),
+                marker=dict(size=8)
+            ))
+            fig.update_layout(
+                title=f"Incident Prediction for {selected_country}",
+                xaxis_title="Year",
+                yaxis_title="Total Incidents",
+                font=dict(size=14, family="Arial, sans-serif"),
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                hovermode="x unified",
+                template="plotly_white",
+                margin=dict(l=50, r=50, t=80, b=50)
+            )
+            
+            # Add explanatory text above the graph
+            st.subheader("Incident Prediction Graph")
+            st.write("""
+            The graph below shows the historical and predicted terrorism incidents for the selected country. 
+            - *Blue Line*: Represents the actual number of incidents recorded in previous years.
+            - *Green Dashed Line*: Represents the forecasted number of incidents for future years.
+            - Hover over the data points to see exact values for each year.
+            Note: The predictions are based on the SARIMA model and may not account for unforeseen events or changes in trends.
+            """)
+            st.plotly_chart(fig, use_container_width=True)
+            
+            # Display forecast values without upper/lower bounds
             st.subheader(f"Predicted Incidents for {selected_country}:")
-            predictions = pd.DataFrame({"Year": forecast_years, "Predicted Incidents": forecast_values})
+            predictions = pd.DataFrame({
+                "Year": forecast_years,
+                "Predicted Incidents": forecast_values
+            })
             st.dataframe(predictions)
+            
+            # Model Evaluation Metrics
+            residuals = fit.resid
+            mae = np.mean(np.abs(residuals))
+            rmse = np.sqrt(np.mean(residuals**2))
+            st.subheader("Model Evaluation Metrics")
+            st.write(f"- *Mean Absolute Error (MAE)*: {mae:.2f}")
+            st.write(f"- *Root Mean Squared Error (RMSE)*: {rmse:.2f}")
